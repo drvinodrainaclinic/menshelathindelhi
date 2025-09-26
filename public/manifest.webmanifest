@@ -1,0 +1,10 @@
+{
+  "name": "Dr. Vinod Raina Clinic",
+  "short_name": "Raina Clinic",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#dc2626",
+  "description": "Confidential HIV Treatment & Sexual Health Services.",
+  "scope": "/"
+}
