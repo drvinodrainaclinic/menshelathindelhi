@@ -3,6 +3,33 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
+// Minimal typings to avoid `any` and support webkit SpeechRecognition and custom events
+declare global {
+  interface DocumentEventMap {
+    "open-search": CustomEvent<void>;
+    "appointment-paid": CustomEvent<void>;
+  }
+  interface SpeechRecognitionAlternative { transcript: string }
+  interface SpeechRecognitionResult {
+    0: SpeechRecognitionAlternative;
+  }
+  interface SpeechRecognitionEventLike {
+    results: ArrayLike<SpeechRecognitionResult>;
+  }
+  interface SpeechRec {
+    lang: string;
+    interimResults: boolean;
+    maxAlternatives: number;
+    onresult: (e: SpeechRecognitionEventLike) => void;
+    onend: () => void;
+    start: () => void;
+  }
+  interface Window {
+    webkitSpeechRecognition?: new () => SpeechRec;
+    SpeechRecognition?: new () => SpeechRec;
+  }
+}
+
 const ROUTES = [
   { href: "/", title: "Home" },
   { href: "/services", title: "Services" },
@@ -23,17 +50,17 @@ export default function SearchModal() {
   const [q, setQ] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const [listening, setListening] = useState(false);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRec | null>(null);
 
   useEffect(() => {
     const onOpen = () => setOpen(true);
     const onClose = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
-    document.addEventListener("open-search" as any, onOpen);
+    document.addEventListener("open-search", onOpen as EventListener);
     document.addEventListener("keydown", onClose);
     return () => {
-      document.removeEventListener("open-search" as any, onOpen);
+      document.removeEventListener("open-search", onOpen as EventListener);
       document.removeEventListener("keydown", onClose);
     };
   }, []);
@@ -58,14 +85,15 @@ export default function SearchModal() {
   }
 
   function startVoice() {
-    const SR = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    const w = window as Window;
+    const SR = w.webkitSpeechRecognition || w.SpeechRecognition;
     if (!SR) return;
     if (!recognitionRef.current) {
       recognitionRef.current = new SR();
       recognitionRef.current.lang = "en-IN";
       recognitionRef.current.interimResults = false;
       recognitionRef.current.maxAlternatives = 1;
-      recognitionRef.current.onresult = (e: any) => {
+      recognitionRef.current.onresult = (e: SpeechRecognitionEventLike) => {
         const text = e.results?.[0]?.[0]?.transcript || "";
         setQ(text);
         setListening(false);

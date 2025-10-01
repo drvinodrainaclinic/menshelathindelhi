@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 const UPI_VPA = "drvinod@upi"; // TODO: replace with your actual UPI ID
 const AMOUNT = 1000;
@@ -35,7 +36,7 @@ export default function PaymentSection() {
     <section className="card mb-8">
       <div className="flex items-start gap-4 flex-col sm:flex-row">
         <div className="shrink-0">
-          <img src={qrUrl} alt="Scan to pay via UPI" className="rounded-md border border-black/10" />
+          <Image src={qrUrl} alt="Scan to pay via UPI" width={220} height={220} className="rounded-md border border-black/10" />
         </div>
         <div className="grid gap-2">
           <h2 className="text-xl font-semibold">Pay Online (INR {AMOUNT})</h2>

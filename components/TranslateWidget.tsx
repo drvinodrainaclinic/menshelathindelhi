@@ -2,15 +2,32 @@
 
 import { useEffect } from "react";
 
+// Minimal global typings for Google Translate snippet
+declare global {
+  interface GoogleTranslateNamespace {
+    TranslateElement: new (
+      options: {
+        pageLanguage: string;
+        includedLanguages?: string;
+        layout?: number;
+        autoDisplay?: boolean;
+      },
+      elementId: string
+    ) => void;
+  }
+  interface Window {
+    google?: { translate?: GoogleTranslateNamespace };
+    __initGoogleTranslate?: () => void;
+  }
+}
+
 export default function TranslateWidget() {
   useEffect(() => {
     // Avoid duplicate script loads
     if (document.getElementById("google-translate-script")) return;
 
     const init = () => {
-      // @ts-ignore
       if (typeof window.google !== "undefined" && window.google.translate) {
-        // @ts-ignore
         new window.google.translate.TranslateElement(
           {
             pageLanguage: "en",
@@ -30,7 +47,7 @@ export default function TranslateWidget() {
     script.id = "google-translate-script";
     script.src =
       "https://translate.google.com/translate_a/element.js?cb=__initGoogleTranslate";
-    (window as any).__initGoogleTranslate = init;
+    window.__initGoogleTranslate = init;
     document.body.appendChild(script);
 
     return () => {
