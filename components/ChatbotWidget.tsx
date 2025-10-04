@@ -28,7 +28,7 @@ export default function ChatbotWidget() {
       const data = await res.json();
       const reply = data?.answer || "Thank you. Our team will follow up. For urgent questions, please call.";
       setMessages((m) => [...m, { role: "assistant", text: reply }]);
-    } catch (e) {
+    } catch {
       setMessages((m) => [...m, { role: "assistant", text: "Sorry, something went wrong. Please try again." }]);
     }
   }

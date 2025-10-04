@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import TreatmentMegaMenu from "@/components/TreatmentMegaMenu";
 import ResourcesMegaMenu from "@/components/ResourcesMegaMenu";
 import ServicesMegaMenu from "@/components/ServicesMegaMenu";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 const navItems = [
   { href: "/about", label: "About Us" },

@@ -40,8 +40,9 @@ export default function AppointmentForm() {
       if (!res.ok) throw new Error(data.message || "Failed to submit");
       setStatus("Appointment request submitted successfully. We will contact you shortly.");
       (e.currentTarget as HTMLFormElement).reset();
-    } catch (err: any) {
-      setStatus(err.message || "Something went wrong. Please try again.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setStatus(message);
     } finally {
       setLoading(false);
     }
@@ -112,3 +113,4 @@ export default function AppointmentForm() {
     </form>
   );
 }
+

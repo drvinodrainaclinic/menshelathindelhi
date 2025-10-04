@@ -1,4 +1,5 @@
 import Breadcrumbs from "@/components/Breadcrumbs";
+import Image from "next/image";
 
 export const metadata = {
   title: "Privacy Policy | Dr. Vinod Raina Clinic",
@@ -12,7 +13,13 @@ export default function PrivacyPage() {
       <h1 className="text-3xl font-semibold mb-2">Privacy Policy</h1>
       <p className="text-foreground/80 mb-6 max-w-prose">We protect your dignity and data at every step—online and in clinic.</p>
       <div className="rounded-xl overflow-hidden border border-black/10 mb-8 relative h-40 sm:h-60">
-        <img src="https://picsum.photos/seed/privacy-hero/1600/600" alt="Privacy" className="w-full h-full object-cover" />
+        <Image
+          src="https://picsum.photos/seed/privacy-hero/1600/600"
+          alt="Privacy"
+          fill
+          sizes="(max-width: 640px) 100vw, 1200px"
+          className="object-cover"
+        />
       </div>
       <div className="prose prose-slate">
         <p>

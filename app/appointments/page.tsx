@@ -1,6 +1,7 @@
 import AppointmentForm from "@/components/AppointmentForm";
 import PaymentSection from "@/components/PaymentSection";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import Image from "next/image";
 
 export const metadata = {
   title: "Book Appointment | Dr. Vinod Raina Clinic",
@@ -17,7 +18,13 @@ export default function AppointmentsPage() {
         details. Your information is confidential and handled securely.
       </p>
       <div className="rounded-xl overflow-hidden border border-black/10 mb-8 relative h-40 sm:h-60">
-        <img src="https://picsum.photos/seed/appointments-hero/1600/600" alt="Appointments" className="w-full h-full object-cover" />
+        <Image
+          src="https://picsum.photos/seed/appointments-hero/1600/600"
+          alt="Appointments"
+          fill
+          sizes="(max-width: 640px) 100vw, 1200px"
+          className="object-cover"
+        />
       </div>
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-2">How It Works</h2>

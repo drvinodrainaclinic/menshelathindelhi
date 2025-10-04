@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export const metadata = {
   title: "Contact | Dr. Vinod Raina Clinic",
   description: "Get in touch for appointments and queries.",
@@ -26,7 +28,7 @@ export default function ContactPage() {
       </div>
       <div className="rounded-xl border border-black/10 dark:border-white/10 overflow-hidden mt-8">
         <div className="relative h-56 sm:h-72">
-          <img src="/images/map.svg" alt="Map placeholder" className="w-full h-full object-cover" />
+          <Image src="/images/map.svg" alt="Map placeholder" fill className="object-cover" />
         </div>
       </div>
     </div>

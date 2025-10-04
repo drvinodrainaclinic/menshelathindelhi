@@ -36,8 +36,8 @@ export default function Footer() {
         <div>
           <p className="font-medium text-foreground">Dr. Vinod Raina Awards</p>
           <ul className="mt-2 space-y-1 list-disc pl-5">
-            <li>"Dr. B.R. Ambedkar, Seva Ratna Award" 2012 for Best Sexologist doctor in Delhi</li>
-            <li>"Best Sexologist in Delhi 2012" by Prime Time Research Media</li>
+            <li>&quot;Dr. B.R. Ambedkar, Seva Ratna Award&quot; 2012 for Best Sexologist doctor in Delhi</li>
+            <li>&quot;Best Sexologist in Delhi 2012&quot; by Prime Time Research Media</li>
           </ul>
         </div>
       </div>
