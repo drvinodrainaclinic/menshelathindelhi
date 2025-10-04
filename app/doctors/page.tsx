@@ -1,5 +1,4 @@
 import DoctorCard from "@/components/DoctorCard";
-import Image from "next/image";
 
 export const metadata = {
   title: "Doctors | Dr. Vinod Raina Clinic",
