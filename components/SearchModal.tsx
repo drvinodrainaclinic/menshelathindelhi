@@ -9,25 +9,23 @@ declare global {
     "open-search": CustomEvent<void>;
     "appointment-paid": CustomEvent<void>;
   }
-  interface SpeechRecognitionAlternative { transcript: string }
-  interface SpeechRecognitionResult {
-    0: SpeechRecognitionAlternative;
-  }
-  interface SpeechRecognitionEventLike {
-    results: ArrayLike<SpeechRecognitionResult>;
-  }
-  interface SpeechRec {
-    lang: string;
-    interimResults: boolean;
-    maxAlternatives: number;
-    onresult: (e: SpeechRecognitionEventLike) => void;
-    onend: () => void;
-    start: () => void;
-  }
   interface Window {
-    webkitSpeechRecognition?: new () => SpeechRec;
-    SpeechRecognition?: new () => SpeechRec;
+    webkitSpeechRecognition?: new () => AppSpeechRec;
+    SpeechRecognition?: new () => AppSpeechRec;
   }
+}
+
+// Local minimal types with unique names to avoid DOM lib collisions
+interface AppSpeechRecognitionAlternative { transcript: string }
+interface AppSpeechRecognitionResult { 0: AppSpeechRecognitionAlternative }
+interface AppSpeechRecognitionEvent { results: ArrayLike<AppSpeechRecognitionResult> }
+interface AppSpeechRec {
+  lang: string;
+  interimResults: boolean;
+  maxAlternatives: number;
+  onresult: (e: AppSpeechRecognitionEvent) => void;
+  onend: () => void;
+  start: () => void;
 }
 
 const ROUTES = [
@@ -50,7 +48,7 @@ export default function SearchModal() {
   const [q, setQ] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const [listening, setListening] = useState(false);
-  const recognitionRef = useRef<SpeechRec | null>(null);
+  const recognitionRef = useRef<AppSpeechRec | null>(null);
 
   useEffect(() => {
     const onOpen = () => setOpen(true);
@@ -93,7 +91,7 @@ export default function SearchModal() {
       recognitionRef.current.lang = "en-IN";
       recognitionRef.current.interimResults = false;
       recognitionRef.current.maxAlternatives = 1;
-      recognitionRef.current.onresult = (e: SpeechRecognitionEventLike) => {
+      recognitionRef.current.onresult = (e: AppSpeechRecognitionEvent) => {
         const text = e.results?.[0]?.[0]?.transcript || "";
         setQ(text);
         setListening(false);
