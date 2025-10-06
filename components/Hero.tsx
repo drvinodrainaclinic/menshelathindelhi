@@ -7,7 +7,7 @@ export default function Hero() {
       <div>
         <span className="badge">Trusted HIV & Sexual Health Care</span>
         <h1 className="mt-4 text-4xl font-semibold leading-tight">
-          Compassionate, Confidential, Evidence‑Based
+        From Protection to Treatment
         </h1>
         <p className="mt-4 text-foreground/80 max-w-prose">
           Our specialists deliver world‑class HIV treatment and comprehensive sexual health services.
