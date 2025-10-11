@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ClientRoot from "@/components/ClientRoot";
+import ComplianceNotice from "@/components/ComplianceNotice";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,12 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.webmanifest",
   themeColor: "#dc2626",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -75,6 +82,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Navbar />
+        <ComplianceNotice />
         <main className="min-h-[calc(100vh-64px)]">{children}</main>
         <ClientRoot />
         <Footer />
