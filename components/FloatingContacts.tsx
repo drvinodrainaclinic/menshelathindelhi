@@ -1,9 +1,9 @@
 "use client";
 
 export default function FloatingContacts() {
-  const displayNumber = "076878 78787";
-  const telHref = "tel:07687878787"; // keep local format for dialing
-  const whatsappHref = "https://wa.me/917687878787?text=Hello%20Doctor%2C%20I%20would%20like%20to%20book%20an%20appointment.";
+  const displayNumber = "+91 98716 05858";
+  const telHref = "tel:+919871605858"; // international format for dialing
+  const whatsappHref = "https://wa.me/919871605858?text=Hello%20Doctor%2C%20I%20would%20like%20to%20connect.";
 
   return (
     <div className="fixed bottom-4 left-4 z-40 flex flex-col gap-2">
