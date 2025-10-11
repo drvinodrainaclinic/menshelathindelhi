@@ -43,7 +43,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Google tag (gtag.js) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-17581315055"
           strategy="afterInteractive"
@@ -54,6 +53,22 @@ export default function RootLayout({
           gtag('js', new Date());
 
           gtag('config', 'AW-17581315055');
+        `}</Script>
+        <Script id="gtag-conversion" strategy="afterInteractive">{`
+          window.gtag_report_conversion = function(url) {
+            var callback = function () {
+              if (typeof(url) !== 'undefined') {
+                window.location = url;
+              }
+            };
+            gtag('event', 'conversion', {
+              'send_to': 'AW-17581315055/fEzyCLWQ-6obEO-ntr9B',
+              'value': 1.0,
+              'currency': 'INR',
+              'event_callback': callback
+            });
+            return false;
+          };
         `}</Script>
       </head>
       <body
