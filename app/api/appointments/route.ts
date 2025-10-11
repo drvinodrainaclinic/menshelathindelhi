@@ -1,46 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
-import { sql, ensureAppointmentsTable } from "@/lib/db";
-import { hasEmailConfig, sendAppointmentEmail } from "@/lib/email";
+import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-const dataDir = path.join(process.cwd(), "data");
-const dataFile = path.join(dataDir, "appointments.json");
+// Appointments API disabled. Direct users to WhatsApp/Call.
 
-type AppointmentItem = {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  date: string;
-  time: string;
-  service: string;
-  message: string;
-  createdAt: string;
-};
+// No types needed as this endpoint is gone.
 
-type AppointmentBody = {
-  name: string;
-  email: string;
-  phone: string;
-  date: string;
-  time: string;
-  service: string;
-  message?: string;
-};
+// No storage used.
 
-async function ensureDataFile() {
-  try {
-    await fs.mkdir(dataDir, { recursive: true });
-    await fs.access(dataFile);
-  } catch {
-    await fs.writeFile(dataFile, JSON.stringify([]), "utf-8");
-  }
-}
-
-export async function POST(req: NextRequest) {
+export async function POST() {
   // Appointments via form are disabled. Direct users to WhatsApp/Call.
   return NextResponse.json(
     {
