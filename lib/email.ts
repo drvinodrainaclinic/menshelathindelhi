@@ -20,6 +20,7 @@ export async function sendAppointmentEmail(_payload: {
   service: string;
   message?: string;
 }) {
-  // no-op
+  // reference param to satisfy ESLint without changing behavior
+  void _payload;
   return;
 }
