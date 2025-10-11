@@ -5,7 +5,6 @@ import Script from "next/script";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ClientRoot from "@/components/ClientRoot";
-import ComplianceNotice from "@/components/ComplianceNotice";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -82,7 +81,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Navbar />
-        <ComplianceNotice />
         <main className="min-h-[calc(100vh-64px)]">{children}</main>
         <ClientRoot />
         <Footer />
