@@ -19,6 +19,13 @@ export default function ChatbotWidget() {
     if (!text) return;
     setMessages((m) => [...m, { role: "user", text }]);
     setInput("");
+    // If this is the first user message, redirect to WhatsApp with the typed text
+    // This opens WhatsApp app on mobile or WhatsApp Web on desktop
+    if (messages.filter((m) => m.role === "user").length === 0) {
+      const url = `https://wa.me/919871605858?text=${encodeURIComponent(text)}`;
+      window.location.href = url;
+      return;
+    }
     try {
       const res = await fetch("/api/chatbot", {
         method: "POST",
@@ -72,3 +79,4 @@ export default function ChatbotWidget() {
     </>
   );
 }
+
