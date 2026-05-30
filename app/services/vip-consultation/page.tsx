@@ -21,7 +21,7 @@ export default function VIPConsultationPage() {
     <div className="container-page section">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/services", label: "Services" }, { label: "VIP Consultation" }]} />
       <h1 className="text-3xl font-semibold mb-2">VIP Consultation</h1>
-      <p className="text-foreground/80 max-w-prose mb-6">Private Consultation for VIP Patients with Dr. Sudhir Bhola. VIP consultations are ideal for celebrities and individuals seeking the highest level of confidentiality and privacy.</p>
+      <p className="text-foreground/80 max-w-prose mb-6">Private Consultation for VIP Patients with Dr. Dr. Vinod Raina. VIP consultations are ideal for celebrities and individuals seeking the highest level of confidentiality and privacy.</p>
 
       <section className="grid gap-6 sm:grid-cols-3">
         <PriceCard
