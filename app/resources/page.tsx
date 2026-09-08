@@ -7,16 +7,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { blogPosts } from "@/data/blog";
 import { vlogPosts } from "@/data/vlog";
+import { getAllPosts } from "@/lib/actions";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
-export default function BlogIndexPage() {
+export default async function BlogIndexPage() {
+  const dbPosts = await getAllPosts().catch(() => []);
+  const posts = dbPosts.length > 0 ? dbPosts : blogPosts;
+
   return (
     <div className="container-page section">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Blog" }]} />
       <h1 className="text-3xl font-semibold mb-2">Clinic Blog</h1>
       <p className="text-foreground/80 mb-6 max-w-prose">Short, practical guides on HIV care, prevention, and sexual wellness—written for Delhi.</p>
       <div className="grid gap-5 sm:grid-cols-3">
-        {blogPosts.map((p) => (
+        {posts.map((p) => (
           <article key={p.slug} className="card">
             <Link href={`/resources/${p.slug}`} className="block link-underline">
               <div className="relative h-40 w-full rounded-md overflow-hidden border border-black/10 mb-3">

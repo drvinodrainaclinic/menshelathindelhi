@@ -1,21 +1,27 @@
 import { blogPosts } from "@/data/blog";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import Image from "next/image";
+import { getPostBySlug } from "@/lib/actions";
 
 export async function generateStaticParams() {
   return blogPosts.map((p) => ({ slug: p.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const dbPost = await getPostBySlug(slug).catch(() => null);
+  const post = dbPost ?? blogPosts.find((p) => p.slug === slug);
   return {
     title: post ? `${post.title} | Blog` : "Blog Post",
     description: post?.excerpt || "Blog post",
   };
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const dbPost = await getPostBySlug(slug).catch(() => null);
+  const post = dbPost ?? blogPosts.find((p) => p.slug === slug);
+
   if (!post) return <div className="container-page section">Post not found.</div>;
   return (
     <div className="container-page section">

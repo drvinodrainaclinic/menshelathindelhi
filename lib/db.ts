@@ -20,3 +20,32 @@ export async function ensureAppointmentsTable() {
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )`;
 }
+
+export async function ensureBlogTable() {
+  if (!sql) return;
+  await sql`CREATE TABLE IF NOT EXISTS blog_posts (
+    id BIGSERIAL PRIMARY KEY,
+    slug TEXT NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    excerpt TEXT NOT NULL,
+    cover TEXT NOT NULL,
+    tags TEXT[] NOT NULL DEFAULT '{}',
+    html TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  )`;
+}
+
+export type BlogRow = {
+  id: number;
+  slug: string;
+  title: string;
+  date: string; // YYYY-MM-DD
+  excerpt: string;
+  cover: string;
+  tags: string[];
+  html: string;
+  created_at: string;
+  updated_at: string;
+};

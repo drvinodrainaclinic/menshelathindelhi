@@ -105,6 +105,26 @@ CREATE TABLE IF NOT EXISTS appointments (
 2. In Vercel Project Settings, add the env vars above.
 3. Redeploy. API will use Neon and send email; without env vars it falls back to file storage (not recommended for production).
 
+## Admin Panel + Blog
+
+The admin panel at `/admin` manages blog posts stored in Postgres (the `blog_posts` table, created automatically on first use). Public blog posts render at `/resources` (listing) and `/resources/[slug]` (article).
+
+Required env vars for admin:
+
+```
+# The password used to log in at /admin/login
+ADMIN_PASSWORD=your_strong_password
+
+# Secret used to sign the login session cookie. Set a long random string in production.
+ADMIN_SESSION_SECRET=a_long_random_secret_string
+```
+
+Notes:
+
+- If `ADMIN_SESSION_SECRET` is missing, a dev-only default is used (fine locally, change for production).
+- The blog's public pages fall back to the static posts in `data/blog.ts` when `DATABASE_URL` is not set, so the site still shows content without a DB.
+- Blog posts authored in the admin are stored in `blog_posts`; update/redelete via the admin dashboard.
+
 
 10m ago
 1m ago
