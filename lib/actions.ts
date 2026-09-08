@@ -159,3 +159,80 @@ export async function getAllPosts(): Promise<BlogRow[]> {
   const rows = (await sql`SELECT * FROM blog_posts ORDER BY date DESC, id DESC`) as unknown as BlogRow[];
   return rows;
 }
+
+export type ImportResult = {
+  imported: number;
+  skipped: number;
+  errors: string[];
+};
+
+export async function importPostsAction(
+  _prevState: ImportResult | { error?: string },
+  formData: FormData
+): Promise<ImportResult | { error?: string }> {
+  if (!(await isAdmin())) return { error: "Not authorized." };
+  if (!sql) return { error: "Database is not configured (DATABASE_URL missing)." };
+
+  await ensureBlogTable();
+
+  const raw = String(formData.get("data") ?? "").trim();
+  if (!raw) {
+    return { error: "Please paste or upload the JSON data." };
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return { error: "Invalid JSON. Please check the data format." };
+  }
+
+  const list = Array.isArray(parsed) ? parsed : [parsed];
+
+  const result: ImportResult = { imported: 0, skipped: 0, errors: [] };
+
+  for (const item of list) {
+    const obj = (item ?? {}) as Record<string, unknown>;
+    const title = typeof obj.title === "string" ? obj.title.trim() : "";
+    const excerpt = typeof obj.excerpt === "string" ? obj.excerpt.trim() : "";
+    const html = typeof obj.html === "string" ? obj.html.trim() : "";
+    const slugInput =
+      typeof obj.slug === "string" ? obj.slug.trim() : "";
+    const date = typeof obj.date === "string" ? obj.date.trim() : "";
+    const cover = typeof obj.cover === "string" ? obj.cover.trim() : "";
+    const tagsRaw = obj.tags;
+
+    if (!title || !excerpt || !html) {
+      result.errors.push(`Skipped "${title || "(untitled)"}": missing title, excerpt, or content.`);
+      continue;
+    }
+
+    const slug = slugInput || slugify(title);
+    const tags = Array.isArray(tagsRaw)
+      ? tagsRaw.map((t) => String(t).trim()).filter(Boolean)
+      : typeof tagsRaw === "string"
+        ? tagsRaw.split(",").map((t) => t.trim()).filter(Boolean)
+        : [];
+
+    try {
+      await sql`
+        INSERT INTO blog_posts (slug, title, date, excerpt, cover, tags, html)
+        VALUES (${slug}, ${title}, ${date || null}, ${excerpt}, ${cover}, ${tags}, ${html})
+      `;
+      result.imported++;
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Unknown error";
+      if (msg.includes("duplicate") || msg.includes("unique")) {
+        result.skipped++;
+      } else {
+        console.error("importPostsAction error", e);
+        result.errors.push(`Failed to import "${title}": ${msg}`);
+      }
+    }
+  }
+
+  revalidatePath("/resources");
+  revalidatePath("/admin");
+
+  return result;
+}

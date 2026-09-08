@@ -19,6 +19,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <nav className="flex items-center gap-2 text-sm">
               <Link href="/admin" className="btn btn-ghost !py-1.5 !px-3">Dashboard</Link>
               <Link href="/admin/new" className="btn btn-primary !py-1.5 !px-3">New Post</Link>
+              <Link href="/admin/import" className="btn btn-ghost !py-1.5 !px-3">Import</Link>
               <Link href="/resources" className="btn btn-ghost !py-1.5 !px-3">View Blog</Link>
             </nav>
           </div>
