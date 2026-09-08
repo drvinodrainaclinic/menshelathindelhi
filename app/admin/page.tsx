@@ -13,7 +13,27 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-4">Blog Posts ({posts.length})</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <h2 className="text-xl font-semibold">Blog Posts ({posts.length})</h2>
+        <Link href="/admin/new" className="btn btn-primary">+ Create Blog Post</Link>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3 mb-8">
+        <Link href="/admin/new" className="card hover:!bg-[var(--muted)]">
+          <h3 className="font-semibold">✍️ New Blog Post</h3>
+          <p className="text-sm text-foreground/70 mt-1">Write and publish a new article.</p>
+        </Link>
+        <Link href="/admin/import" className="card hover:!bg-[var(--muted)]">
+          <h3 className="font-semibold">📥 Import Posts</h3>
+          <p className="text-sm text-foreground/70 mt-1">Bulk import from JSON or file.</p>
+        </Link>
+        <Link href="/admin/appointments" className="card hover:!bg-[var(--muted)]">
+          <h3 className="font-semibold">📅 Appointments</h3>
+          <p className="text-sm text-foreground/70 mt-1">View and manage appointment requests.</p>
+        </Link>
+      </div>
+
+      <h2 className="text-lg font-semibold mb-4">All Posts</h2>
       {posts.length === 0 ? (
         <p className="text-foreground/70">No posts yet. <Link href="/admin/new" className="text-brand underline">Create one</Link>.</p>
       ) : (

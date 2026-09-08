@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { verifyAdminPassword, signSession, ADMIN_COOKIE, isAdmin } from "@/lib/auth";
-import { sql, ensureBlogTable, type BlogRow } from "@/lib/db";
+import { sql, ensureBlogTable, ensureSettingsTable, ensureAppointmentsTable, type BlogRow, type AppointmentRow } from "@/lib/db";
 
 export async function loginAction(_prevState: { error?: string }, formData: FormData) {
   const password = String(formData.get("password") ?? "");
@@ -235,4 +235,111 @@ export async function importPostsAction(
   revalidatePath("/admin");
 
   return result;
+}
+
+// ---- Site Settings ----
+
+export async function saveSettingsAction(_prevState: { ok?: boolean; error?: string }, formData: FormData) {
+  if (!(await isAdmin())) return { error: "Not authorized." };
+  if (!sql) return { error: "Database is not configured (DATABASE_URL missing)." };
+
+  await ensureSettingsTable();
+
+  const keys = [
+    "clinicName",
+    "phone",
+    "phoneAlt",
+    "email",
+    "whatsapp",
+    "address",
+    "hours",
+  ];
+
+  try {
+    for (const key of keys) {
+      const value = String(formData.get(key) ?? "").trim();
+      await sql`
+        INSERT INTO site_settings (key, value) VALUES (${key}, ${value})
+        ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()
+      `;
+    }
+  } catch (e) {
+    console.error("saveSettingsAction error", e);
+    return { error: "Could not save settings." };
+  }
+
+  revalidatePath("/");
+  revalidatePath("/contact");
+  return { ok: true };
+}
+
+// ---- Appointments ----
+
+export async function submitAppointmentAction(
+  _prevState: { ok?: boolean; error?: string; message?: string },
+  formData: FormData
+) {
+  if (!sql) return { error: "Appointments are temporarily unavailable." };
+
+  await ensureAppointmentsTable();
+
+  const name = String(formData.get("name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").trim();
+  const date = String(formData.get("date") ?? "").trim();
+  const time = String(formData.get("time") ?? "").trim();
+  const service = String(formData.get("service") ?? "").trim();
+  const message = String(formData.get("message") ?? "").trim();
+
+  if (!name || !phone || !date) {
+    return { error: "Name, phone, and date are required." };
+  }
+
+  try {
+    await sql`
+      INSERT INTO appointments (name, email, phone, date, time, service, message)
+      VALUES (${name}, ${email}, ${phone}, ${date || null}, ${time}, ${service}, ${message || null})
+    `;
+  } catch (e) {
+    console.error("submitAppointmentAction error", e);
+    return { error: "Could not submit your appointment. Please try again." };
+  }
+
+  return { ok: true, message: "Your appointment request has been received. We will contact you shortly." };
+}
+
+export async function getAppointmentsAction(): Promise<AppointmentRow[]> {
+  if (!sql) return [];
+  await ensureAppointmentsTable();
+  try {
+    const rows = await sql`SELECT * FROM appointments ORDER BY created_at DESC` as unknown as AppointmentRow[];
+    return rows;
+  } catch {
+    return [];
+  }
+}
+
+export async function updateAppointmentStatusAction(formData: FormData) {
+  if (!(await isAdmin())) return;
+  if (!sql) return;
+
+  await ensureAppointmentsTable();
+  const id = String(formData.get("id") ?? "").trim();
+  const status = String(formData.get("status") ?? "").trim();
+  if (id && sql) {
+    await sql`UPDATE appointments SET status = ${status} WHERE id = ${Number(id)}`;
+  }
+  revalidatePath("/admin/appointments");
+}
+
+export async function deleteAppointmentAction(formData: FormData) {
+  if (!(await isAdmin())) return;
+  if (!sql) return;
+
+  await ensureAppointmentsTable();
+  const id = String(formData.get("id") ?? "").trim();
+  if (id && sql) {
+    await sql`DELETE FROM appointments WHERE id = ${Number(id)}`;
+  }
+  revalidatePath("/admin/appointments");
 }

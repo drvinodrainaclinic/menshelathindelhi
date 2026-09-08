@@ -7,7 +7,6 @@ export const sql = connectionString ? neon(connectionString) : null as unknown a
 
 export async function ensureAppointmentsTable() {
   if (!sql) return;
-  // Create table if it doesn't exist. Safe to run on cold starts.
   await sql`CREATE TABLE IF NOT EXISTS appointments (
     id BIGSERIAL PRIMARY KEY,
     name TEXT NOT NULL,
@@ -17,6 +16,7 @@ export async function ensureAppointmentsTable() {
     time TEXT NOT NULL,
     service TEXT NOT NULL,
     message TEXT,
+    status TEXT NOT NULL DEFAULT 'new',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )`;
 }
@@ -32,9 +32,23 @@ export async function ensureBlogTable() {
     cover TEXT NOT NULL,
     tags TEXT[] NOT NULL DEFAULT '{}',
     html TEXT NOT NULL,
+    published BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   )`;
+}
+
+export async function ensureSettingsTable() {
+  if (!sql) return;
+  await sql`CREATE TABLE IF NOT EXISTS site_settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL DEFAULT '',
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  )`;
+}
+
+export async function ensureAllTables() {
+  await Promise.all([ensureAppointmentsTable(), ensureBlogTable(), ensureSettingsTable()]);
 }
 
 export type BlogRow = {
@@ -46,6 +60,20 @@ export type BlogRow = {
   cover: string;
   tags: string[];
   html: string;
+  published: boolean;
   created_at: string;
   updated_at: string;
+};
+
+export type AppointmentRow = {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  date: string;
+  time: string;
+  service: string;
+  message: string | null;
+  status: string;
+  created_at: string;
 };
